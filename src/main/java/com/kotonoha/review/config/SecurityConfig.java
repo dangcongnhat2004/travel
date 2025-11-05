@@ -14,11 +14,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/reviews/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()   // ✅ Mở toàn bộ API
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form.disable())       // ❗ Tắt màn hình form login
-                .httpBasic(basic -> basic.disable());    // ❗ Tắt Basic Auth 401
+                .formLogin(form -> form.disable())            // ✅ Tắt login page
+                .httpBasic(httpBasic -> httpBasic.disable()); // ✅ Tắt Basic Auth
 
         return http.build();
     }
