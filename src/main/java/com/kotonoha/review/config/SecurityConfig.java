@@ -12,11 +12,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable()) // tắt CSRF để cho phép POST từ frontend
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/reviews/**").permitAll() // cho phép GET + POST không cần login
-                        .anyRequest().permitAll() // cho phép tất cả request khác luôn (tạm thời để test)
-                );
+                        .requestMatchers("/api/reviews/**").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .formLogin(form -> form.disable())       // ❗ Tắt màn hình form login
+                .httpBasic(basic -> basic.disable());    // ❗ Tắt Basic Auth 401
 
         return http.build();
     }
