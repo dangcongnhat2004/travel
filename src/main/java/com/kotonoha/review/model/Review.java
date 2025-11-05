@@ -3,30 +3,27 @@ package com.kotonoha.review.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "review")
 public class Review {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotBlank
   private String title;
-
-  @Enumerated(EnumType.STRING)
-  private Category category;
-
-  @Min(1) @Max(5)
+  private String category;
   private int rating;
 
-  @Column(length=4000)
+  @Column(columnDefinition = "TEXT")
   private String content;
 
   private String imageUrl;
 
-  private Instant createdAt = Instant.now();
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name="place_id")
-  private Place place;
+  @CreationTimestamp
+  private LocalDateTime createdAt;
 }

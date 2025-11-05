@@ -6,45 +6,30 @@ import com.kotonoha.review.model.Review;
 import com.kotonoha.review.repo.PlaceRepository;
 import com.kotonoha.review.repo.ReviewRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173") // Cho phép React gọi API
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/reviews")
 public class ReviewController {
+  private final ReviewRepository reviewRepository;
 
-  private final ReviewRepository reviewRepo;
-  private final PlaceRepository placeRepo;
-
-  public ReviewController(ReviewRepository reviewRepo, PlaceRepository placeRepo) {
-    this.reviewRepo = reviewRepo;
-    this.placeRepo = placeRepo;
+  public ReviewController(ReviewRepository reviewRepository) {
+    this.reviewRepository = reviewRepository;
   }
 
-  @GetMapping("/reviews")
-  public List<Review> all() {
-    return reviewRepo.findAll();
+  @GetMapping
+  public List<Review> getAll() {
+    return reviewRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
   }
 
-  @PostMapping("/reviews")
-  public ResponseEntity<Review> create(@Valid @RequestBody ReviewRequest req) {
-    Place place = null;
-    if (req.getPlaceId() != null) {
-      place = placeRepo.findById(req.getPlaceId()).orElse(null);
-    }
-    Review r = Review.builder()
-        .title(req.getTitle())
-        .category(req.getCategory())
-        .rating(req.getRating())
-        .content(req.getContent())
-        .imageUrl(req.getImageUrl())
-        .place(place)
-        .build();
-    return ResponseEntity.ok(reviewRepo.save(r));
+  @PostMapping
+  public ResponseEntity<?> create(@RequestBody Review review) {
+    Review saved = reviewRepository.save(review);
+    return ResponseEntity.ok(saved);
   }
-
-  @GetMapping("/places")
-  public List<Place> places() { return placeRepo.findAll(); }
 }
